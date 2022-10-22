@@ -2,11 +2,12 @@ from django.contrib.auth import authenticate, login, logout
 from django.db import IntegrityError
 from django.shortcuts import render, redirect
 
-from .models import User
+from .models import User, Listing
 
 
 def index(request):
-    return render(request, "auctions/index.html")
+    products = Listing.objects.filter(is_active=True)
+    return render(request, "auctions/index.html", context={'products': products})
 
 
 def login_view(request):

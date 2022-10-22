@@ -1,9 +1,9 @@
-/*body {*/
-/*    padding: 10px;*/
-/*}*/
-
 .form-control {
     width: 50%;
     margin-top: 10px;
     margin-bottom: 10px;
+}
+
+.p-footer {
+    margin-bottom: 0rem;
 }
