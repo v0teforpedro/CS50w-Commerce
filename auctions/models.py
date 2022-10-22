@@ -37,7 +37,7 @@ class Listing(models.Model):
         db_table = 'listings'
 
     def __str__(self):
-        return f'Lot "{self.name}" by {self.created_by.username}'
+        return f'Lot: {self.name}, Seller: {self.created_by.username}'
 
     # def save(self, *args, **kwargs):
     #     if not self.curr_price:
@@ -75,10 +75,13 @@ class Bid(models.Model):
         db_table = 'bids'
 
     def __str__(self):
-        return f'Bid by {self.bid_by.username} on {self.listing.name}'
+        return f'Bidder: {self.bid_by.username}, Amount: {self.amount}, Lot: {self.listing.name}'
 
     def clean(self):
-        if self.amount <= self.listing.current_price:
+        if not self.listing.current_price:
+            if self.amount <= self.listing.start_price:
+                raise ValidationError('The bid must be greater than starting price')
+        elif self.amount <= self.listing.current_price:
             raise ValidationError('The bid must be greater than current price')
 
     # def save(self, *args, **kwargs):

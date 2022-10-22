@@ -10,7 +10,7 @@
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                 <li class="nav-item">
-                    <a class="nav-link" href="#">Active Listing</a>
+                    <a class="nav-link" href="{% url 'auctions:index' %}">Active Listing</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="#">Categories</a>
@@ -20,7 +20,7 @@
                     <a class="nav-link" href="#">Watchlist</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#">Create Listing</a>
+                    <a class="nav-link" href="{% url 'auctions:add' %}">Create Listing</a>
                 </li>
                 {% endif %}
             </ul>

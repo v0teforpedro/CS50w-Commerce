@@ -3,7 +3,7 @@
 {% block body %}
     <div class="row justify-content-around">
         {% for item in products %}
-        <div class="card p-0 mb-5 mt-5" style="width: 18rem;">
+        <div class="card p-0 mb-3 mt-3" style="width: 18rem;">
             <img src="{{ item.image.url }}" class="card-img-top" alt="...">
             <div class="card-body">
                 <h5 class="card-title">{{ item.name }}</h5>
@@ -11,7 +11,13 @@
             </div>
             <ul class="list-group list-group-flush">
                 <li class="list-group-item">Starting Price: {{ item.start_price }}$</li>
-                <li class="list-group-item">Current Price: {{ item.current_price }}$</li>
+                <li class="list-group-item">Current Price:
+                    {% if item.current_price %}
+                    {{ item.current_price }}$
+                    {% else %}
+                    {{ item.start_price }}$
+                    {% endif %}
+                </li>
                 <li class="list-group-item">Category:
                 {% for category in item.categories.all %}
                     <button type="button" class="btn btn-outline-secondary btn-sm rounded-pill" disabled>

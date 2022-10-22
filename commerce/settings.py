@@ -36,6 +36,10 @@ ALLOWED_HOSTS = [host.strip() for host in os.getenv('ALLOWED_HOSTS').split()]
 
 INSTALLED_APPS = [
     "auctions",
+
+    "crispy_forms",
+    "crispy_bootstrap5",
+
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -135,3 +139,6 @@ AUTH_USER_MODEL = 'auctions.User'
 
 USE_L10N = False
 DATE_FORMAT = 'd.m.Y'
+
+CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
+CRISPY_TEMPLATE_PACK = "bootstrap5"

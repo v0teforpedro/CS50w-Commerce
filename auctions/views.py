@@ -1,7 +1,8 @@
-from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth import authenticate, login, logout, get_user
 from django.db import IntegrityError
 from django.shortcuts import render, redirect
 
+from .forms import ListingCreateForm
 from .models import User, Listing
 
 
@@ -60,3 +61,20 @@ def register(request):
         return redirect("auctions:index")
     else:
         return render(request, "auctions/register.html")
+
+
+def create_listing(request):
+    if request.method == 'GET':
+        form = ListingCreateForm()
+    else:
+        form = ListingCreateForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.instance.created_by = request.user
+            form.save()
+            return redirect('auctions:index')
+
+    return render(
+        request,
+        'auctions/create_listing.html',
+        context={'title': 'Create Listing', 'form': form}
+    )

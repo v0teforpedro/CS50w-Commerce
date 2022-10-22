@@ -1,0 +1,18 @@
+{% extends "auctions/layout.html" %}
+
+{% load crispy_forms_filters %}
+{% load crispy_forms_tags %}
+
+{% block title %} {{ title }} {% endblock %}
+
+{% block body %}
+    <div class="justify-content">
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{form | crispy}}
+            <div class="text-center">
+                <button class="btn btn-outline-dark btn" style="text-align: center" type="submit">Create</button>
+            </div>
+        </form>
+    </div>
+{% endblock %}
