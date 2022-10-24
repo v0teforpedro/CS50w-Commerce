@@ -6,13 +6,34 @@
 {% block title %} {{ title }} {% endblock %}
 
 {% block body %}
-    <div class="justify-content">
-        <form method="post" enctype="multipart/form-data">
-            {% csrf_token %}
-            {{form | crispy}}
-            <div class="text-center">
-                <button class="btn btn-outline-dark btn" style="text-align: center" type="submit">Create</button>
+    <h3 class="text-center">Create your Lot here:</h3>
+    <form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+        <div class="form-centered">
+            <div class="row">
+                <div class="col">
+                    {{ form.name|as_crispy_field }}
+                </div>
+                <div class="col">
+                    {{ form.start_price|as_crispy_field }}
+                </div>
             </div>
-        </form>
-    </div>
+            <div class="row">
+                <div class="col">
+                    {{ form.image|as_crispy_field }}
+                </div>
+                <div class="col">
+                    {{ form.categories|as_crispy_field }}
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    {{ form.description|as_crispy_field }}
+                </div>
+            </div>
+        </div>
+        <div class="text-center">
+            <button class="btn btn-info btn mt-4" style="text-align: center" type="submit">Create Lot</button>
+        </div>
+    </form>
 {% endblock %}

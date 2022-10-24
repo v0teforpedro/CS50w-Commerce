@@ -1,0 +1,39 @@
+{% extends "auctions/layout.html" %}
+
+{% load static %}
+
+{% block title %} {{ title }} {% endblock %}
+
+{% block body %}
+    <div class="carousel-small">
+        <div id="carouselExampleDark" class="carousel carousel-dark slide" data-bs-ride="carousel">
+        <div class="carousel-indicators">
+            {% for item in data %}
+            <button type="button" data-bs-target="#carouselExampleDark" data-bs-slide-to="{{ forloop.counter0 }}"
+                    {% if forloop.counter == 1 %}class="active" aria-current="true"{% endif %}
+                    aria-label="Slide {{ forloop.counter }}"></button>
+            {% endfor %}
+        </div>
+        <div class="carousel-inner">
+        {% for item in data %}
+            <div class="carousel-item {% if forloop.counter0 == 0 %}active{% endif %}" data-bs-interval="3000">
+                <img src="{{ item.image.url }}" class="d-block w-100" alt="...">
+                <div class="carousel-caption d-none d-md-block">
+                    <div class="zoom">
+                        <h1><a href="{% url 'auctions:cat_list' item.pk %}">{{ item.name }}</a></h1>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+        </div>
+            <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleDark" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Previous</span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleDark" data-bs-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Next</span>
+            </button>
+        </div>
+    </div>
+{% endblock %}

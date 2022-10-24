@@ -3,12 +3,12 @@ from django.db import IntegrityError
 from django.shortcuts import render, redirect
 
 from .forms import ListingCreateForm
-from .models import User, Listing
+from .models import User, Listing, Category
 
 
 def index(request):
     products = Listing.objects.filter(is_active=True)
-    return render(request, "auctions/index.html", context={'products': products})
+    return render(request, "auctions/index.html", context={'data': products, 'title': 'Active Listings'})
 
 
 def login_view(request):
@@ -78,3 +78,16 @@ def create_listing(request):
         'auctions/create_listing.html',
         context={'title': 'Create Listing', 'form': form}
     )
+
+
+def categories(request):
+    data = Category.objects.all()
+    return render(request, "auctions/categories.html", context={'title': 'List of Categories', 'data': data})
+
+
+def category_listing(request, pk):
+    data = Listing.objects.filter(categories=pk)
+    category = Category.objects.get(pk=pk)
+    name = category.name
+
+    return render(request, "auctions/index.html", context={'title': name, 'data': data})

@@ -1,6 +1,6 @@
 from django import forms
 
-from .models import Listing
+from .models import Listing, Category
 
 
 class ListingCreateForm(forms.ModelForm):
@@ -9,10 +9,25 @@ class ListingCreateForm(forms.ModelForm):
     #     super().__init__(*args, **kwargs)
     #     var = self.fields['created_by']
     #     var.disabled = True
-    #     var.visible = False
+
+    categories = forms.ModelMultipleChoiceField(
+        queryset=Category.objects.all(),
+        widget=forms.CheckboxSelectMultiple,
+        required=False,
+    )
 
     class Meta:
         model = Listing
-        fields = '__all__'
+        fields = (
+            'name',
+            'start_price',
+            'image',
+            'categories',
+            'description',
+        )
+        widgets = {
+            'categories': forms.Textarea(attrs={'rows': 5, 'cols': 10}),
+            'start_price': forms.NumberInput(attrs={'step': 0.25}),
+        }
 
         exclude = ['is_active', 'created_by']

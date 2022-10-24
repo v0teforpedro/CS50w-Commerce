@@ -10,6 +10,7 @@ class User(AbstractUser):
 
 class Category(models.Model):
     name = models.CharField(max_length=100)
+    image = models.ImageField(upload_to='auctions/img/categories', null=True)
 
     class Meta:
         verbose_name = 'category'
@@ -21,12 +22,12 @@ class Category(models.Model):
 
 
 class Listing(models.Model):
-    name = models.CharField(max_length=100)
-    start_price = models.PositiveIntegerField()
+    name = models.CharField(max_length=100, verbose_name='Lot name')
+    start_price = models.DecimalField(max_digits=11, decimal_places=2, verbose_name='Starting price')
     # curr_price = models.PositiveIntegerField(blank=True)
-    image = models.ImageField(upload_to='auctions/img/', default='default_image.png')
+    image = models.ImageField(upload_to='auctions/img/', default='default_image.png', verbose_name='Photo')
     description = models.TextField(max_length=255, null=True, blank=True)
-    categories = models.ManyToManyField(Category, blank=True)
+    categories = models.ManyToManyField(Category, null=True, blank=True)
     created_by = models.ForeignKey(User, on_delete=models.CASCADE)
     created_on = models.DateField(auto_now_add=True)
     is_active = models.BooleanField(default=True)
@@ -65,7 +66,7 @@ class Comment(models.Model):
 
 
 class Bid(models.Model):
-    amount = models.PositiveIntegerField()
+    amount = models.DecimalField(max_digits=11, decimal_places=2)
     listing = models.ForeignKey(Listing, on_delete=models.CASCADE, related_name='bids')
     bid_by = models.ForeignKey(User, on_delete=models.CASCADE)
 

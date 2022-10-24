@@ -1,36 +1,37 @@
 {% extends "auctions/layout.html" %}
 
+{% block title %} {{ title }} {% endblock %}
+
 {% block body %}
     <div class="row justify-content-around">
-        {% for item in products %}
-        <div class="card p-0 mb-3 mt-3" style="width: 18rem;">
+        {% for item in data %}
+        <div class="card p-0 mb-3 mt-3" style="width: 19rem; border-color: #0dcaf0">
             <img src="{{ item.image.url }}" class="card-img-top" alt="...">
             <div class="card-body">
                 <h5 class="card-title">{{ item.name }}</h5>
                 <p class="card-text">{{ item.description }}</p>
             </div>
             <ul class="list-group list-group-flush">
-                <li class="list-group-item">Starting Price: {{ item.start_price }}$</li>
                 <li class="list-group-item">Current Price:
+                    <b>
                     {% if item.current_price %}
-                    {{ item.current_price }}$
+                        {{ item.current_price }}$
                     {% else %}
-                    {{ item.start_price }}$
+                        {{ item.start_price }}$
                     {% endif %}
+                    </b>
                 </li>
-                <li class="list-group-item">Category:
+                <li class="list-group-item">Tags:
                 {% for category in item.categories.all %}
-                    <button type="button" class="btn btn-outline-secondary btn-sm rounded-pill" disabled>
+                    <button type="button" class="btn btn-outline-success btn-sm rounded-pill mt-1 mb-1" disabled>
                         {{ category.name }}
                     </button>
                 {% endfor %}
                 </li>
+                <li class="list-group-item">
+                    <div class="m-1 text-center"><a href="#" class="btn btn-info w-50">Details</a></div>
+                </li>
             </ul>
-            <div class="card-body text-center">
-                <div class="d-grid col-8 mx-auto">
-                    <a href="#" class="btn btn-primary">Details</a>
-                </div>
-            </div>
             <div class="card-footer text-muted">
                 <p class="p-footer"><i>Seller: {{ item.created_by }}</i></p>
                 <p class="p-footer"><i>Listed: {{ item.created_on }}</i></p>
