@@ -27,7 +27,7 @@ class Listing(models.Model):
     # curr_price = models.PositiveIntegerField(blank=True)
     image = models.ImageField(upload_to='auctions/img/', default='default_image.png', verbose_name='Photo')
     description = models.TextField(max_length=255, null=True, blank=True)
-    categories = models.ManyToManyField(Category, null=True, blank=True)
+    categories = models.ManyToManyField(Category, blank=True)
     created_by = models.ForeignKey(User, on_delete=models.CASCADE)
     created_on = models.DateField(auto_now_add=True)
     is_active = models.BooleanField(default=True)
@@ -51,7 +51,10 @@ class Listing(models.Model):
 
     @property
     def current_price(self):
-        return self.bids.aggregate(Max('amount')).get('amount__max')
+        try:
+            return format(self.bids.aggregate(Max('amount')).get('amount__max'), '.2f')
+        except TypeError:
+            return self.start_price
 
 
 class Comment(models.Model):
@@ -79,11 +82,14 @@ class Bid(models.Model):
         return f'Bidder: {self.bid_by.username}, Amount: {self.amount}, Lot: {self.listing.name}'
 
     def clean(self):
-        if not self.listing.current_price:
-            if self.amount <= self.listing.start_price:
-                raise ValidationError('The bid must be greater than starting price')
-        elif self.amount <= self.listing.current_price:
-            raise ValidationError('The bid must be greater than current price')
+        if self.amount <= float(self.listing.current_price):
+            raise ValidationError('Your bid must be greater than current price.')
+
+        # if not self.listing.current_price:
+        #     if self.amount <= self.listing.start_price:
+        #         raise ValidationError('Your bid must be greater than starting price')
+        # elif self.amount <= float(self.listing.current_price):
+        #     raise ValidationError('Your bid must be greater than current price')
 
     # def save(self, *args, **kwargs):
     #     if self.amount > self.listing.curr_price:

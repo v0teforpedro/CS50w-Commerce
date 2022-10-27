@@ -2,7 +2,7 @@ from django.contrib.auth import authenticate, login, logout, get_user
 from django.db import IntegrityError
 from django.shortcuts import render, redirect
 
-from .forms import ListingCreateForm
+from .forms import ListingCreateForm, BidCreateForm
 from .models import User, Listing, Category
 
 
@@ -82,12 +82,27 @@ def create_listing(request):
 
 def categories(request):
     data = Category.objects.all()
-    return render(request, "auctions/categories.html", context={'title': 'List of Categories', 'data': data})
+    return render(request, 'auctions/categories.html', context={'title': 'List of Categories', 'data': data})
 
 
 def category_listing(request, pk):
     data = Listing.objects.filter(categories=pk)
     category = Category.objects.get(pk=pk)
     name = category.name
+    return render(request, 'auctions/index.html', context={'title': name, 'data': data})
 
-    return render(request, "auctions/index.html", context={'title': name, 'data': data})
+
+def listing_page(request, pk):
+    data = Listing.objects.get(pk=pk)
+    title = f'Lot №{data.id} ({data.name})'
+    form = BidCreateForm()
+
+    if request.method == 'POST':
+        form = BidCreateForm(request.POST)
+        form.instance.listing = data
+        if form.is_valid():
+            form.instance.bid_by = request.user
+            form.save()
+            return redirect('auctions:lot_page', data.pk)
+
+    return render(request, 'auctions/listing_page.html', context={'data': data, 'title': title, 'form': form})

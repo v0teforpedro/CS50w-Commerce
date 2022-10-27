@@ -1,6 +1,10 @@
+from crispy_forms.bootstrap import FieldWithButtons
+from crispy_forms.helper import FormHelper
+from crispy_forms.layout import Field, Submit
+
 from django import forms
 
-from .models import Listing, Category
+from .models import Bid, Category, Listing
 
 
 class ListingCreateForm(forms.ModelForm):
@@ -30,4 +34,33 @@ class ListingCreateForm(forms.ModelForm):
             'start_price': forms.NumberInput(attrs={'step': 0.25}),
         }
 
-        exclude = ['is_active', 'created_by']
+
+class BidCreateForm(forms.ModelForm):
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper(self)
+        self.helper.form_show_labels = False
+        self.helper.add_layout(FieldWithButtons(
+            Field('amount', placeholder='Make your bid...', step='0.25'),
+            Submit('bid', 'Place Bid', css_class='btn-secondary'),
+            input_size="input-group",
+        ))
+
+    class Meta:
+        model = Bid
+        fields = (
+            'amount',
+        )
+        # labels = {
+        #     'amount': ''
+        # }
+        # widgets = {
+        #     'amount': forms.NumberInput(attrs={
+        #         'step': 0.25,
+        #         'class': 'form-control',
+        #         'placeholder': 'Make your bid...',
+        #         'aria-describedby': 'button-addon2',
+        #         'aria-label': 'Make your bid...',
+        #     }),
+        # }

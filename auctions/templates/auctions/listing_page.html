@@ -1,0 +1,53 @@
+{% extends "auctions/layout.html" %}
+
+{% block title %} {{ title }} {% endblock %}
+
+{% load crispy_forms_filters %}
+{% load crispy_forms_tags %}
+
+{% block body %}
+    <div class="row">
+        <div class="col-sm-6">
+            <figure class="figure">
+                <img src="{{ data.image.url }}" class="figure-img img-fluid rounded" alt="...">
+                <figcaption class="figure-caption">Listed by - {{ data.created_by }}</figcaption>
+                <figcaption class="figure-caption">{{ data.created_on }}</figcaption>
+            </figure>
+        </div>
+        <div class="col-sm-6">
+            <h2>{{ data.name }}</h2>
+            <p class="fst-italic">{{ data.description }}</p>
+            <ul class="lh-lg">
+                <li><b>Starting Price:</b> {{ data.start_price }}$</li>
+                <li><b>Current Price:</b> {{ data.current_price }}$</li>
+                <li><b>Total Bids:</b>
+                    {% if data.bid_count %}
+                        {{ data.bid_count }} <small>bid(s) so far.</small>
+                    {% else %}
+                        <small>No bids yet!</small>
+                    {% endif %}
+                </li>
+            </ul>
+            <br>
+            <p class="fw-bold">Categories:
+            {% for category in data.categories.all %}
+                    <a role="button" class="btn btn-outline-success btn-sm rounded-pill mt-1 mb-1"
+                       href="{% url 'auctions:cat_list' category.pk %}">{{ category.name }}</a>
+            {% endfor %}
+            </p>
+            <div class="d-flex">
+                {% crispy form %}
+            </div>
+{#            <div class="d-flex row-form-errors">{{ form|as_crispy_errors }}</div>#}
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-6">
+
+        </div>
+        <div class="col-sm-6">
+
+        </div>
+    </div>
+
+{% endblock %}

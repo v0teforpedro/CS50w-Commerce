@@ -5,7 +5,7 @@
 {% block body %}
     <div class="row justify-content-around">
         {% for item in data %}
-        <div class="card p-0 mb-3 mt-3" style="width: 19rem; border-color: #0dcaf0">
+        <div class="card p-0 mb-2 mt-2" style="width: 19rem; border-color: #0dcaf0">
             <img src="{{ item.image.url }}" class="card-img-top" alt="...">
             <div class="card-body">
                 <h5 class="card-title">{{ item.name }}</h5>
@@ -13,13 +13,7 @@
             </div>
             <ul class="list-group list-group-flush">
                 <li class="list-group-item">Current Price:
-                    <b>
-                    {% if item.current_price %}
-                        {{ item.current_price }}$
-                    {% else %}
-                        {{ item.start_price }}$
-                    {% endif %}
-                    </b>
+                    <b>{{ item.current_price }}$</b>
                 </li>
                 <li class="list-group-item">Tags:
                 {% for category in item.categories.all %}
@@ -29,7 +23,7 @@
                 {% endfor %}
                 </li>
                 <li class="list-group-item">
-                    <div class="m-1 text-center"><a href="#" class="btn btn-info w-50">Details</a></div>
+                    <div class="m-1 text-center"><a href="{% url 'auctions:lot_page' item.pk %}" class="btn btn-info w-50">Details</a></div>
                 </li>
             </ul>
             <div class="card-footer text-muted">
