@@ -1,4 +1,5 @@
 {% extends "auctions/layout.html" %}
+{% load static %}
 
 {% block title %} {{ title }} {% endblock %}
 
@@ -7,14 +8,14 @@
 
 {% block body %}
     <div class="row">
-        <div class="col-sm-6">
+        <div class="col-md-5">
             <figure class="figure">
                 <img src="{{ data.image.url }}" class="figure-img img-fluid rounded" alt="...">
-                <figcaption class="figure-caption">Listed by - {{ data.created_by }}</figcaption>
-                <figcaption class="figure-caption">{{ data.created_on }}</figcaption>
+                <figcaption class="figure-caption text-end">Listed by - {{ data.created_by }}</figcaption>
+                <figcaption class="figure-caption text-end">{{ data.created_on }}</figcaption>
             </figure>
         </div>
-        <div class="col-sm-6">
+        <div class="col-md-7">
             <h2>{{ data.name }}</h2>
             <p class="fst-italic">{{ data.description }}</p>
             <ul class="lh-lg">
@@ -28,26 +29,63 @@
                     {% endif %}
                 </li>
             </ul>
-            <br>
-            <p class="fw-bold">Categories:
-            {% for category in data.categories.all %}
+            <div class="d-flex flex-row justify-content-between">
+                <p class="fw-bold">Categories:
+                {% for category in data.categories.all %}
                     <a role="button" class="btn btn-outline-success btn-sm rounded-pill mt-1 mb-1"
                        href="{% url 'auctions:cat_list' category.pk %}">{{ category.name }}</a>
-            {% endfor %}
-            </p>
-            <div class="d-flex">
-                {% crispy form %}
+                {% endfor %}
+                </p>
+                {% if user.is_authenticated %}
+                <form method="post">
+                {% csrf_token %}
+                    {% if in_watchlist == False %}
+                    <button type="submit" name="add_wl" class="btn btn-outline-primary mb-3">
+                        <i class="bi bi-plus-circle"></i>
+                        <i class="bi bi-eye-fill"></i>
+                    </button>
+                    {% else %}
+                    <button type="submit" name="remove_wl" class="btn btn-outline-danger mb-3">
+                        <i class="bi bi-dash-circle"></i>
+                        <i class="bi bi-eye-fill"></i>
+                    </button>
+                    {% endif %}
+                </form>
+                {% endif %}
             </div>
-{#            <div class="d-flex row-form-errors">{{ form|as_crispy_errors }}</div>#}
+            {% if user.is_authenticated %}
+                <div class="d-flex">
+                    {% crispy form1 %}
+                </div>
+            {% endif %}
         </div>
     </div>
     <div class="row">
-        <div class="col-sm-6">
-
+        <div class="col-md-5 mb-3">
+            {% if user.is_authenticated %}
+                {% crispy form2 %}
+            {% endif %}
         </div>
-        <div class="col-sm-6">
-
+        <div class="col-md-7">
+            <div class="card text-dark" style="background-color: beige; border-color: black">
+                <div class="card-body p-4">
+                    <h4 class="mb-0">Recent comments</h4>
+                    <p class="fw-light mb-4 pb-2">Latest Comments section by users</p>
+                    {% for comment in comments %}
+                        <div class="d-flex flex-start mt-2 mb-2" id="comments">
+                            <img class="rounded-circle m-3" src="{% static 'auctions/default_user.jpg' %}"
+                                 alt="avatar" width="60" height="60"/>
+                            <div class="w-100 pt-2 pb-2">
+                                <div class="d-flex justify-content-between align-items-center me-3 mb-3">
+                                    <h6 class="fw-bold mb-1">{{ comment.posted_by }}</h6>
+                                    <p class="small mb-0">{{ comment.timestamp }}</p>
+                                </div>
+                                <p class="font-monospace mb-0">{{ comment.text }}</p>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
         </div>
     </div>
-
 {% endblock %}

@@ -17,7 +17,7 @@
                 </li>
                 {% if user.is_authenticated %}
                 <li class="nav-item">
-                    <a class="nav-link" href="#">My Watchlist</a>
+                    <a class="nav-link" href="{% url 'auctions:watchlist' %}">My Watchlist</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'auctions:add' %}">Create Lot</a>

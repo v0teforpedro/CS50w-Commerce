@@ -31,6 +31,7 @@ class Listing(models.Model):
     created_by = models.ForeignKey(User, on_delete=models.CASCADE)
     created_on = models.DateField(auto_now_add=True)
     is_active = models.BooleanField(default=True)
+    users_wls = models.ManyToManyField(User, blank=True, related_name='watchlist')
 
     class Meta:
         verbose_name = 'listing'
@@ -60,12 +61,16 @@ class Listing(models.Model):
 class Comment(models.Model):
     text = models.TextField(max_length=255)
     posted_by = models.ForeignKey(User, on_delete=models.CASCADE)
+    listing = models.ForeignKey(Listing, on_delete=models.CASCADE, related_name='comments')
     timestamp = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         verbose_name = 'comment'
         verbose_name_plural = 'comments'
         db_table = 'comments'
+
+    def __str__(self):
+        return f'Comment ({self.pk}) by: {self.posted_by}, Lot: {self.listing.name}'
 
 
 class Bid(models.Model):

@@ -2,8 +2,8 @@ from django.contrib.auth import authenticate, login, logout, get_user
 from django.db import IntegrityError
 from django.shortcuts import render, redirect
 
-from .forms import ListingCreateForm, BidCreateForm
-from .models import User, Listing, Category
+from .forms import ListingCreateForm, BidCreateForm, CommentCreateForm
+from .models import User, Listing, Category, Comment
 
 
 def index(request):
@@ -92,17 +92,50 @@ def category_listing(request, pk):
     return render(request, 'auctions/index.html', context={'title': name, 'data': data})
 
 
+def watchlist(request):
+    data = Listing.objects.filter(users_wls=request.user.id)
+    title = 'My Watchlist'
+    return render(request, 'auctions/index.html', context={'title': title, 'data': data})
+
+
 def listing_page(request, pk):
     data = Listing.objects.get(pk=pk)
     title = f'Lot №{data.id} ({data.name})'
-    form = BidCreateForm()
+    comments = Comment.objects.filter(listing=pk).order_by('-timestamp')
+    in_watchlist = request.user in data.users_wls.all()
+    form1 = BidCreateForm()
+    form2 = CommentCreateForm()
 
     if request.method == 'POST':
-        form = BidCreateForm(request.POST)
-        form.instance.listing = data
-        if form.is_valid():
-            form.instance.bid_by = request.user
-            form.save()
+        if 'bid' in request.POST:
+            form1 = BidCreateForm(request.POST)
+            form1.instance.listing = data
+            if form1.is_valid():
+                form1.instance.bid_by = request.user
+                form1.save()
+                return redirect('auctions:lot_page', data.pk)
+
+        elif 'comment' in request.POST:
+            form2 = CommentCreateForm(request.POST)
+            form2.instance.listing = data
+            if form2.is_valid():
+                form2.instance.posted_by = request.user
+                form2.save()
+                return redirect('auctions:lot_page', data.pk)
+
+        elif 'add_wl' in request.POST:
+            data.users_wls.add(request.user)
             return redirect('auctions:lot_page', data.pk)
 
-    return render(request, 'auctions/listing_page.html', context={'data': data, 'title': title, 'form': form})
+        elif 'remove_wl' in request.POST:
+            data.users_wls.remove(request.user)
+            return redirect('auctions:lot_page', data.pk)
+
+    return render(request, 'auctions/listing_page.html', context={
+        'data': data,
+        'title': title,
+        'form1': form1,
+        'form2': form2,
+        'comments': comments,
+        'in_watchlist': in_watchlist,
+    })

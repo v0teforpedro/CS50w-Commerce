@@ -1,10 +1,10 @@
 from crispy_forms.bootstrap import FieldWithButtons
 from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Field, Submit
+from crispy_forms.layout import Field, Submit, Layout
 
 from django import forms
 
-from .models import Bid, Category, Listing
+from .models import Bid, Category, Comment, Listing
 
 
 class ListingCreateForm(forms.ModelForm):
@@ -64,3 +64,21 @@ class BidCreateForm(forms.ModelForm):
         #         'aria-label': 'Make your bid...',
         #     }),
         # }
+
+
+class CommentCreateForm(forms.ModelForm):
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper(self)
+        self.helper.form_show_labels = False
+        self.helper.layout = Layout(
+            Field('text', placeholder='Leave a comment here...'),
+            Submit('comment', 'Post Comment', css_class='btn-secondary'),
+        )
+
+    class Meta:
+        model = Comment
+        fields = (
+            'text',
+        )
