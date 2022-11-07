@@ -1,9 +1,10 @@
 from django.contrib.auth import authenticate, login, logout, get_user
+from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
 from django.shortcuts import render, redirect
 
 from .forms import ListingCreateForm, BidCreateForm, CommentCreateForm
-from .models import User, Listing, Category, Comment
+from .models import User, Listing, Category, Comment, Bid
 
 
 def index(request):
@@ -63,6 +64,7 @@ def register(request):
         return render(request, "auctions/register.html")
 
 
+@login_required
 def create_listing(request):
     if request.method == 'GET':
         form = ListingCreateForm()
@@ -92,9 +94,17 @@ def category_listing(request, pk):
     return render(request, 'auctions/index.html', context={'title': name, 'data': data})
 
 
+@login_required
 def watchlist(request):
     data = Listing.objects.filter(users_wls=request.user.id)
     title = 'My Watchlist'
+    return render(request, 'auctions/index.html', context={'title': title, 'data': data})
+
+
+@login_required
+def my_listings(request):
+    data = Listing.objects.filter(created_by=request.user.id)
+    title = 'My Listings'
     return render(request, 'auctions/index.html', context={'title': title, 'data': data})
 
 
@@ -105,6 +115,11 @@ def listing_page(request, pk):
     in_watchlist = request.user in data.users_wls.all()
     form1 = BidCreateForm()
     form2 = CommentCreateForm()
+
+    try:
+        winner = Bid.objects.filter(listing=data).last().bid_by
+    except AttributeError:
+        winner = None
 
     if request.method == 'POST':
         if 'bid' in request.POST:
@@ -131,6 +146,11 @@ def listing_page(request, pk):
             data.users_wls.remove(request.user)
             return redirect('auctions:lot_page', data.pk)
 
+        elif 'close' in request.POST:
+            data.is_active = False
+            data.save()
+            return redirect('auctions:lot_page', data.pk)
+
     return render(request, 'auctions/listing_page.html', context={
         'data': data,
         'title': title,
@@ -138,4 +158,5 @@ def listing_page(request, pk):
         'form2': form2,
         'comments': comments,
         'in_watchlist': in_watchlist,
+        'winner': winner,
     })

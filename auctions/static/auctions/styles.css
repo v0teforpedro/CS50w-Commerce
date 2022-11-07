@@ -60,3 +60,24 @@ body {
     border-radius: 7px;
     background-color: turquoise;
 }
+
+@keyframes change-color {
+  25% {
+    color: blue;
+  }
+  50% {
+    color: green;
+  }
+  75% {
+    color: orangered;
+  }
+  100% {
+    color: violet;
+  }
+}
+
+.color-change {
+  animation-name: change-color;
+  animation-duration: 0.5s;
+  animation-iteration-count: infinite;
+}

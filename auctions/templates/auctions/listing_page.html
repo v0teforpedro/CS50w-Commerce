@@ -53,10 +53,22 @@
                 </form>
                 {% endif %}
             </div>
-            {% if user.is_authenticated %}
-                <div class="d-flex">
+            {% if user.is_authenticated and data.is_active %}
+                <div class="d-inline-flex flex-column">
                     {% crispy form1 %}
                 </div>
+                {% if data.created_by == user and data.bid_count > 0 %}
+                    <form method="post">
+                    {% csrf_token %}
+                        <button type="submit" name="close" class="btn btn-warning mb-3">Close Listing</button>
+                    </form>
+                {% endif %}
+            {% else %}
+                {% if user == winner %}
+                    <h3 class="color-change">Congratulations, {{ user }}! You've won this auction!</h3>
+                {% else %}
+                    <h4 style="text-decoration: underline">Auction closed.</h4>
+                {% endif %}
             {% endif %}
         </div>
     </div>
